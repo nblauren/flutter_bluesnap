@@ -125,8 +125,6 @@ public class FlutterBluesnapPlugin
                     }
                 });
             }
-
-            ;
         };
     }
 
@@ -167,10 +165,13 @@ public class FlutterBluesnapPlugin
     }
 
     protected void completePurchase(final SdkResult sdkResult) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+        Log.d(TAG, "Format complete purchase result: " + sdkResult.toString());
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("fraudSessionId", sdkResult.getKountSessionId());
 
         if (sdkResult.getAmount() != null) {
-            HashMap<String, Object> priceDetails = new HashMap<String, Object>();
+            HashMap<String, Object> priceDetails = new HashMap<>();
 
             priceDetails.put("amount", sdkResult.getAmount());
             priceDetails.put("currency", sdkResult.getCurrencyNameCode());
@@ -178,25 +179,29 @@ public class FlutterBluesnapPlugin
             result.put("priceDetails", priceDetails);
         }
 
-        if (sdkResult.getChosenPaymentMethodType() == ChosenPaymentMethod.PAYPAL) {
-            result.put("method", "paypal");
-            result.put("priceDetails", sdkResult.getPaypalInvoiceId());
-        } else if (sdkResult.getChosenPaymentMethodType() == ChosenPaymentMethod.GOOGLE_PAY) {
-            result.put("method", "googlepay");
-            result.put("priceDetails", sdkResult.getGooglePayToken());
+        switch (sdkResult.getChosenPaymentMethodType()) {
+            case ChosenPaymentMethod.PAYPAL:
+                result.put("method", "paypal");
+                result.put("priceDetails", sdkResult.getPaypalInvoiceId());
+                break;
+            case ChosenPaymentMethod.GOOGLE_PAY:
+                result.put("method", "googlepay");
+                result.put("priceDetails", sdkResult.getGooglePayToken());
 
-        } else if (sdkResult.getChosenPaymentMethodType() == ChosenPaymentMethod.CREDIT_CARD) {
-            result.put("method", "cc");
+                break;
+            case ChosenPaymentMethod.CC:
+                result.put("method", "cc");
 
-            HashMap<String, Object> cc = new HashMap<String, Object>();
+                HashMap<String, Object> cc = new HashMap<>();
 
-            cc.put("type", sdkResult.getCardType());
-            cc.put("last4Digits", sdkResult.getLast4Digits());
-            cc.put("expirationDate", sdkResult.getExpDate());
+                cc.put("type", sdkResult.getCardType());
+                cc.put("last4Digits", sdkResult.getLast4Digits());
+                cc.put("expirationDate", sdkResult.getExpDate());
 
-            result.put("cc", cc);
-            result.put("valid3DS", sdkResult.getThreeDSAuthenticationResult());
+                result.put("cc", cc);
+                result.put("valid3DS", sdkResult.getThreeDSAuthenticationResult());
 
+                break;
         }
 
         sendMessageToDart("checkoutResult", result);
@@ -222,8 +227,6 @@ public class FlutterBluesnapPlugin
 
                 Double amount = call.argument("amount");
                 String requestCurrency = call.argument("currency");
-                @Nullable
-                String shopperId = call.argument("shopperId");
                 requestCurrency = (requestCurrency != null) ? (requestCurrency) : currency;
 
                 SdkRequest sdkRequest = new SdkRequest(amount, requestCurrency, false, false, false);
@@ -293,13 +296,9 @@ public class FlutterBluesnapPlugin
         }
     }
 
-    protected int resultCount = 0;
-
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "Activity result? (" + resultCount++ + ") " + requestCode + " " + resultCode);
-
-        boolean isSubscription = false;
+        // Log.d(TAG, "Activity result: " + requestCode + " " + resultCode);
 
         if (requestCode == BS_CHECKOUT_REQUEST || requestCode == BS_PAYMENT_REQUEST) {
 
@@ -311,33 +310,34 @@ public class FlutterBluesnapPlugin
                 } else {
                     sendMessageToDart("checkoutFail", "userCanceled");
                 }
-                return isSubscription;
+                return false;
             }
 
-            if (resultCode == BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK
-                    && resultCode == BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK) {
+//            Bundle extras = data.getExtras();
+            SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
 
-                // Here we can access the payment result
-                Bundle extras = data.getExtras();
-                SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+            // if (BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK == sdkResult.getResult())
+            // {
+            // ?!?: && resultCode ==
+            // BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK
 
-                // this result will be returned from both BluesnapCheckoutActivity and
-                // BluesnapCreatePaymentActivity,
-                // since handling is the same. BluesnapChoosePaymentMethodActivity has a
-                // different OK result code.
-                if (BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK == sdkResult.getResult()) {
-                    completePurchase(sdkResult);
+            // this result will be returned from both BluesnapCheckoutActivity and
+            // BluesnapCreatePaymentActivity,
+            // since handling is the same. BluesnapChoosePaymentMethodActivity has a
+            // different OK result code.
+            if (BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK == sdkResult.getResult()) {
+                completePurchase(sdkResult);
 
-                    // Call app server to process the payment
-                } else {
-                    // TODO failed payment?
-                    Log.i(TAG, "Payment failed? " + sdkResult.getResult());
-                }
+                // Call app server to process the payment
+            } else {
+                // TODO failed payment?
+                Log.e(TAG, "Payment failed? " + sdkResult.getResult());
             }
+            // }
 
         }
 
-        return isSubscription;
+        return false;
     }
 
     // This static function is optional and equivalent to onAttachedToEngine. It
@@ -361,7 +361,6 @@ public class FlutterBluesnapPlugin
 
     @Override
     public void onAttachedToActivity(ActivityPluginBinding binding) {
-        Log.d(TAG, "onAttachedToActivityy");
         activity = binding.getActivity();
         binding.addActivityResultListener(this);
     }

@@ -72,9 +72,11 @@ class _MyAppState extends State<MyApp> {
                       vertical: 16.0, horizontal: 16.0),
                   child: RaisedButton(
                       onPressed: _initialized
-                          ? () {
+                          ? () async {
                               print('Checkout $amount');
-                              FlutterBluesnap.checkout(amount: amount);
+                              dynamic response = await FlutterBluesnap.checkout(
+                                  amount: amount);
+                              print("Bluesnap response $response");
                             }
                           : null,
                       child: Text('Checkout'))),

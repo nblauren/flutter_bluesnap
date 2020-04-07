@@ -70,7 +70,7 @@ abstract class FlutterBluesnap {
   static bool _enableProduction = false;
   static bool _disable3DS = false;
 
-  static Future<void> setup(
+  static Future<dynamic> setup(
       {String token,
       String currency,
       bool enableGooglePay,
@@ -110,7 +110,7 @@ abstract class FlutterBluesnap {
     return _setupRequest.future;
   }
 
-  static Future<void> checkout(
+  static Future<dynamic> checkout(
       {double amount, String currency, String token}) async {
     if (!_initialized) {
       throw StateError("Bluesnap not intialized, run setup first.");
