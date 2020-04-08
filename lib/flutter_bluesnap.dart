@@ -2,7 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 
-abstract class FlutterBluesnap {
+class FlutterBluesnap {
+  static final FlutterBluesnap _instance = FlutterBluesnap._internal();
+
+  factory FlutterBluesnap() {
+    return _instance;
+  }
+
+  FlutterBluesnap._internal();
+
   static const MethodChannel _channel = const MethodChannel('flutter_bluesnap');
 
   static const String BS_VAULTED_SHOPPER = "vaulted-shoppers";
@@ -16,6 +24,7 @@ abstract class FlutterBluesnap {
   // Example for receiving method invocations from platform and return results.
   static _listen() {
     if (!_initialized) {
+      FlutterBluesnap();
       _channel.setMethodCallHandler((MethodCall call) async {
         print('Got message: $call');
         switch (call.method) {
