@@ -65,7 +65,7 @@ public class SwiftFlutterBluesnapPlugin: NSObject, FlutterPlugin {
             } else if FlutterMethodNotImplemented.isEqual(result) {
                 NSLog("\(name) not implemented")
             } else if (result != nil) {
-                NSLog("\(result)")
+                NSLog("Got response (but it's not used): \(result as! String)");
             }
         }
     }
@@ -78,16 +78,16 @@ public class SwiftFlutterBluesnapPlugin: NSObject, FlutterPlugin {
      */
     private func requestNewTokenFromDart(completion: @escaping (_ token: BSToken?, _ error: BSErrors?) -> Void) {
 
-        NSLog("\("Got BS token expiration notification!")")
+        NSLog("Got BS token expiration notification!")
 
-        methodChannel.invokeMethod("getNewToken") {
+        methodChannel.invokeMethod("getNewToken", arguments: nil) {
             (result: Any?) -> Void in
 
             if let flutterError = result as? FlutterError {
                 NSLog("getNewToken failed: \(flutterError.message!)")
             } else if FlutterMethodNotImplemented.isEqual(result) {
                 NSLog("\(result as! String) not implemented")
-            } else {
+            } else if (result != nil) {
                 NSLog("Got new token: \(result as! String)")
                 do {
                     try self.token = BSToken(tokenStr: result as? String);
@@ -108,6 +108,9 @@ public class SwiftFlutterBluesnapPlugin: NSObject, FlutterPlugin {
                     NSLog("Set token failed: \(error)")
                     self.sendMessageToDart("setupFailed", error as NSObject);
                 }
+            } else {
+                NSLog("Set token failed: No token returned");
+                self.sendMessageToDart("setupFailed");
             }
         }
     }
@@ -278,6 +281,7 @@ public class SwiftFlutterBluesnapPlugin: NSObject, FlutterPlugin {
             guard let args = call.arguments else {
                 return
             }
+
             // Due to android not supporting predefined address details, support for iOS is not implemented
             if let callArgs = args as? [String: Any],
                 let amount = callArgs["amount"] as? Double {

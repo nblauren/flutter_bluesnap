@@ -21,6 +21,17 @@ class FlutterBluesnap {
 
   static bool _initialized = false;
 
+  static Function _requestTokenHandler;
+
+  static get tokenRequestHandler => _requestTokenHandler;
+  static set tokenRequestHandler(Function handler) {
+    if (_requestTokenHandler == null) {
+      _requestTokenHandler = handler;
+    } else {
+      throw UnsupportedError("Token handler has already been set");
+    }
+  }
+
   // Example for receiving method invocations from platform and return results.
   static _listen() {
     if (!_initialized) {
@@ -28,6 +39,13 @@ class FlutterBluesnap {
       _channel.setMethodCallHandler((MethodCall call) async {
         print('Got message: $call');
         switch (call.method) {
+          case 'getNewToken':
+            print('Request new token');
+            if (tokenRequestHandler != null) {
+              String token = await _requestTokenHandler(call.arguments);
+              return token;
+            }
+            break;
           case 'setupComplete':
             print('Setup completed succesfully: ${call.arguments}');
             if (_setupRequest != null) {
@@ -37,7 +55,7 @@ class FlutterBluesnap {
             } else {
               print('Setup request is null?!');
             }
-            return;
+            break;
           case 'setupFailed':
             print('Setup failed: ${call.arguments}');
             if (_setupRequest != null) {
@@ -45,13 +63,13 @@ class FlutterBluesnap {
               _setupRequest.completeError(fail);
               _setupRequest = null;
             }
-            return;
+            break;
           case 'checkoutResult':
             print('Checkout succesfully: ${call.arguments}');
             if (_checkoutRequest != null) {
               _checkoutRequest.complete(call.arguments);
             }
-            return;
+            break;
           case 'requestFail':
           case 'checkoutFail':
             print('There was a request error: ${call.arguments}');
@@ -63,10 +81,11 @@ class FlutterBluesnap {
             } else {
               print('Checkout request is null?!');
             }
-            return;
+            break;
           default:
             throw MissingPluginException();
         }
+        return null;
       });
       _initialized = true;
     }
