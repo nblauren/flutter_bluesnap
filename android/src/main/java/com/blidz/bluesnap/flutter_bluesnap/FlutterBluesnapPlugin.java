@@ -56,10 +56,16 @@ public class FlutterBluesnapPlugin
     protected Activity activity;
 
     public FlutterBluesnapPlugin() {
+        bluesnapService = BlueSnapService.getInstance();
+        setupTokenProvider();
     }
 
-    private FlutterBluesnapPlugin(Context applicationContext) {
+    private FlutterBluesnapPlugin(Context applicationContext, MethodChannel methodChannel, Activity activity) {
+        bluesnapService = BlueSnapService.getInstance();
+        setupTokenProvider();
         this.applicationContext = applicationContext;
+        this.methodChannel = methodChannel;
+        this.activity = activity;
     }
 
     @Override
@@ -69,10 +75,6 @@ public class FlutterBluesnapPlugin
         applicationContext = binding.getApplicationContext();
         methodChannel = new MethodChannel(binding.getBinaryMessenger(), channelName);
         methodChannel.setMethodCallHandler(this);
-
-        bluesnapService = BlueSnapService.getInstance();
-
-        setupTokenProvider();
     }
 
     @Override
@@ -355,8 +357,9 @@ public class FlutterBluesnapPlugin
     // be defined
     // in the same class.
     public static void registerWith(Registrar registrar) {
+        Log.i(TAG, "Attach bluesnap plugin to engine via registerWith");
         final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), channelName);
-        methodChannel.setMethodCallHandler(new FlutterBluesnapPlugin(registrar.context()));
+        methodChannel.setMethodCallHandler(new FlutterBluesnapPlugin(registrar.context(), methodChannel, registrar.activity()));
     }
 
     @Override

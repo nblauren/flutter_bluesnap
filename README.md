@@ -30,3 +30,7 @@ self.window = UIWindow(frame: UIScreen.main.bounds);
 self.window.rootViewController = self.navigationController;
 self.window.makeKeyAndVisible()
 ```
+
+## How to enable on Anrdoid
+
+On android you'll have to update your apps `minSdkVersion` to 19 within build.gradle.
