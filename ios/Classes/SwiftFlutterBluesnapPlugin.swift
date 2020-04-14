@@ -305,7 +305,7 @@ public class SwiftFlutterBluesnapPlugin: NSObject, FlutterPlugin {
                 );
 
                 sdkRequest.allowCurrencyChange = false;
-                sdkRequest.hideStoreCardSwitch = false;
+                sdkRequest.hideStoreCardSwitch = callArgs["hideStoreCardSwitch"] as? Bool ?? false;
                 sdkRequest.activate3DS = !self.disable3DS;
 
                 let navigationController = self.viewController as? UINavigationController;

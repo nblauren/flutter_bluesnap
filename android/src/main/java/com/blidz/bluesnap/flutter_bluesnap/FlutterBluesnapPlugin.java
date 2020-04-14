@@ -229,6 +229,8 @@ public class FlutterBluesnapPlugin
 
                 Double amount = call.argument("amount");
                 String requestCurrency = call.argument("currency");
+                Boolean hideStoreCardSwitch = call.argument("hideStoreCardSwitch");
+
                 requestCurrency = (requestCurrency != null) ? (requestCurrency) : currency;
 
                 SdkRequest sdkRequest = new SdkRequest(amount, requestCurrency, false, false, false);
@@ -242,6 +244,7 @@ public class FlutterBluesnapPlugin
                 }
 
                 sdkRequest.setActivate3DS(!disable3DS);
+                sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch != null ? hideStoreCardSwitch : false);
 
                 // allowCurrencyChange property: if true, the SDK will allow the shopper to
                 // change the purchase currency. By default it is true; if you wish to prevent
