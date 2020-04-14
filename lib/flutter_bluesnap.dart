@@ -97,6 +97,7 @@ class FlutterBluesnap {
   static bool _enableApplePay = false;
   static bool _enableProduction = false;
   static bool _disable3DS = false;
+  static bool _hideStoreCardSwitch = false;
 
   static Future<dynamic> setup(
       {String token,
@@ -105,7 +106,8 @@ class FlutterBluesnap {
       bool enablePaypal,
       bool enableApplePay,
       bool enableProduction,
-      bool disable3DS}) async {
+      bool disable3DS,
+      bool hideStoreCardSwitch}) async {
     _listen();
 
     enableGooglePay = enableGooglePay ?? _enableGooglePay;
@@ -114,6 +116,7 @@ class FlutterBluesnap {
     enableProduction = enableProduction ?? _enableProduction;
     disable3DS = disable3DS ?? _disable3DS;
     currency = currency ?? _currency;
+    hideStoreCardSwitch ?? _hideStoreCardSwitch;
 
     _enableGooglePay = enableGooglePay;
     _enablePaypal = enablePaypal;
@@ -121,6 +124,7 @@ class FlutterBluesnap {
     _enableProduction = enableProduction;
     _disable3DS = disable3DS;
     _currency = currency;
+    _hideStoreCardSwitch = hideStoreCardSwitch;
 
     _setupRequest = Completer();
 
@@ -132,7 +136,8 @@ class FlutterBluesnap {
       "enableGooglePay": enableApplePay,
       "enableApplePay": enableApplePay,
       "enableProduction": enableProduction,
-      "disable3DS": disable3DS
+      "disable3DS": disable3DS,
+      "hideStoreCardSwitch": hideStoreCardSwitch
     });
 
     return _setupRequest.future;
