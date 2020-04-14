@@ -315,7 +315,7 @@ public class FlutterBluesnapPlugin
                 return false;
             }
 
-//            Bundle extras = data.getExtras();
+            // Bundle extras = data.getExtras();
             SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
 
             // if (BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK == sdkResult.getResult())
@@ -359,7 +359,8 @@ public class FlutterBluesnapPlugin
     public static void registerWith(Registrar registrar) {
         Log.i(TAG, "Attach bluesnap plugin to engine via registerWith");
         final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), channelName);
-        methodChannel.setMethodCallHandler(new FlutterBluesnapPlugin(registrar.context(), methodChannel, registrar.activity()));
+        methodChannel.setMethodCallHandler(
+                new FlutterBluesnapPlugin(registrar.context(), methodChannel, registrar.activity()));
     }
 
     @Override
