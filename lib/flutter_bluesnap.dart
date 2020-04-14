@@ -162,8 +162,11 @@ class FlutterBluesnap {
 
     print('Start checkout for: $amount');
 
-    await _channel
-        .invokeMethod('checkout', {"amount": amount, "currency": currency});
+    await _channel.invokeMethod('checkout', {
+      "amount": amount,
+      "currency": currency,
+      "hideStoreCardSwitch": _hideStoreCardSwitch
+    });
 
     return _checkoutRequest.future;
   }
