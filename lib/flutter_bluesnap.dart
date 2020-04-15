@@ -2,6 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 
+String _currency;
+bool _enableGooglePay = false;
+bool _enablePaypal = false;
+bool _enableApplePay = false;
+bool _enableProduction = false;
+bool _disable3DS = false;
+bool _hideStoreCardSwitch = false;
+
+Completer _setupRequest, _checkoutRequest;
+bool _initialized = false;
+Function _requestTokenHandler;
+
 class FlutterBluesnap {
   static final FlutterBluesnap _instance = FlutterBluesnap._internal();
 
@@ -16,12 +28,6 @@ class FlutterBluesnap {
   static const String BS_VAULTED_SHOPPER = "vaulted-shoppers";
   static const String BS_PLAN = "recurring/plans";
   static const String BS_SUBSCRIPTION = "recurring/subscriptions";
-
-  static Completer _setupRequest, _checkoutRequest;
-
-  static bool _initialized = false;
-
-  static Function _requestTokenHandler;
 
   static get tokenRequestHandler => _requestTokenHandler;
   static set tokenRequestHandler(Function handler) {
@@ -91,14 +97,6 @@ class FlutterBluesnap {
     }
   }
 
-  static String _currency;
-  static bool _enableGooglePay = false;
-  static bool _enablePaypal = false;
-  static bool _enableApplePay = false;
-  static bool _enableProduction = false;
-  static bool _disable3DS = false;
-  static bool _hideStoreCardSwitch = false;
-
   static Future<dynamic> setup(
       {String token,
       String currency,
@@ -116,7 +114,7 @@ class FlutterBluesnap {
     enableProduction = enableProduction ?? _enableProduction;
     disable3DS = disable3DS ?? _disable3DS;
     currency = currency ?? _currency;
-    hideStoreCardSwitch ?? _hideStoreCardSwitch;
+    hideStoreCardSwitch = hideStoreCardSwitch ?? _hideStoreCardSwitch;
 
     _enableGooglePay = enableGooglePay;
     _enablePaypal = enablePaypal;
