@@ -184,11 +184,11 @@ public class FlutterBluesnapPlugin
         switch (sdkResult.getChosenPaymentMethodType()) {
             case ChosenPaymentMethod.PAYPAL:
                 result.put("method", "paypal");
-                result.put("priceDetails", sdkResult.getPaypalInvoiceId());
+                result.put("paypalInvoiceId", sdkResult.getPaypalInvoiceId());
                 break;
             case ChosenPaymentMethod.GOOGLE_PAY:
                 result.put("method", "googlepay");
-                result.put("priceDetails", sdkResult.getGooglePayToken());
+                result.put("googlePayToken", sdkResult.getGooglePayToken());
 
                 break;
             case ChosenPaymentMethod.CC:
