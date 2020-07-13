@@ -6,6 +6,7 @@ String _currency;
 bool _enableGooglePay = false;
 bool _enablePaypal = false;
 bool _enableApplePay = false;
+String _applePayMerchantIdentifier;
 bool _enableProduction = false;
 bool _disable3DS = false;
 bool _hideStoreCardSwitch = false;
@@ -105,12 +106,15 @@ class FlutterBluesnap {
       bool enableApplePay,
       bool enableProduction,
       bool disable3DS,
-      bool hideStoreCardSwitch}) async {
+      bool hideStoreCardSwitch,
+      String applePayMerchantIdentifier}) async {
     _listen();
 
     enableGooglePay = enableGooglePay ?? _enableGooglePay;
     enablePaypal = enablePaypal ?? _enableApplePay;
     enableApplePay = enableApplePay ?? _enablePaypal;
+    applePayMerchantIdentifier =
+        applePayMerchantIdentifier ?? _applePayMerchantIdentifier;
     enableProduction = enableProduction ?? _enableProduction;
     disable3DS = disable3DS ?? _disable3DS;
     currency = currency ?? _currency;
@@ -135,7 +139,8 @@ class FlutterBluesnap {
       "enableApplePay": enableApplePay,
       "enableProduction": enableProduction,
       "disable3DS": disable3DS,
-      "hideStoreCardSwitch": hideStoreCardSwitch
+      "hideStoreCardSwitch": hideStoreCardSwitch,
+      "applePayMerchantIdentifier": applePayMerchantIdentifier
     });
 
     return _setupRequest.future;
