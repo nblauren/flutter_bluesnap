@@ -15,6 +15,13 @@ Completer _setupRequest, _checkoutRequest;
 bool _initialized = false;
 Function _requestTokenHandler;
 
+class FlutterBluesnapException implements Exception {
+  final String type;
+  final String message;
+
+  FlutterBluesnapException(this.message, this.type);
+}
+
 class FlutterBluesnap {
   static final FlutterBluesnap _instance = FlutterBluesnap._internal();
 
@@ -66,7 +73,8 @@ class FlutterBluesnap {
           case 'setupFailed':
             print('Setup failed: ${call.arguments}');
             if (_setupRequest != null) {
-              Exception fail = Exception(call.arguments);
+              Exception fail =
+                  FlutterBluesnapException(call.arguments, call.method);
               _setupRequest.completeError(fail);
               _setupRequest = null;
             }
@@ -82,7 +90,8 @@ class FlutterBluesnap {
             print('There was a request error: ${call.arguments}');
             if (_checkoutRequest != null) {
               print("Sending fail to checkout request");
-              Exception fail = Exception(call.arguments);
+              Exception fail =
+                  FlutterBluesnapException(call.arguments, call.method);
               _checkoutRequest.completeError(fail);
               _checkoutRequest = null;
             } else {
@@ -157,7 +166,7 @@ class FlutterBluesnap {
         await setup(token: token);
       } catch (e) {
         print("Bluesnap setup failed $e");
-        throw Exception("Bluesnap setup failed $e");
+        throw FlutterBluesnapException("Bluesnap setup failed $e", "setup");
       }
     }
 
