@@ -242,6 +242,7 @@ public class FlutterBluesnapPlugin
                         sdkRequest.setGooglePayTestMode(false);
                     }
                 }
+                sdkRequest.setGooglePayTestMode(false);
 
                 sdkRequest.setActivate3DS(!disable3DS);
                 sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch != null ? hideStoreCardSwitch : false);
