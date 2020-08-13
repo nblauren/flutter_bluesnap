@@ -238,11 +238,10 @@ public class FlutterBluesnapPlugin
                 if (enableGooglePay) {
                     sdkRequest.setGooglePayActive(false);
                     // TODO: Detect production
-                    if (enableProduction) {
-                        sdkRequest.setGooglePayTestMode(false);
-                    }
                 }
-                sdkRequest.setGooglePayTestMode(false);
+                if (enableProduction) {
+                    sdkRequest.setGooglePayTestMode(false);
+                }
 
                 sdkRequest.setActivate3DS(!disable3DS);
                 sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch != null ? hideStoreCardSwitch : false);
