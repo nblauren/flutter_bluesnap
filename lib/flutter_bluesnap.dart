@@ -120,8 +120,8 @@ class FlutterBluesnap {
     _listen();
 
     enableGooglePay = enableGooglePay ?? _enableGooglePay;
-    enablePaypal = enablePaypal ?? _enableApplePay;
-    enableApplePay = enableApplePay ?? _enablePaypal;
+    enablePaypal = enablePaypal ?? _enablePaypal;
+    enableApplePay = enableApplePay ?? _enableApplePay;
     applePayMerchantIdentifier =
         applePayMerchantIdentifier ?? _applePayMerchantIdentifier;
     enableProduction = enableProduction ?? _enableProduction;
@@ -144,7 +144,7 @@ class FlutterBluesnap {
     await _channel.invokeMethod('setup', {
       "token": token,
       "currency": currency,
-      "enableGooglePay": enableApplePay,
+      "enableGooglePay": enableGooglePay,
       "enableApplePay": enableApplePay,
       "enableProduction": enableProduction,
       "disable3DS": disable3DS,
