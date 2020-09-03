@@ -22,5 +22,5 @@ Flutter Bluesnap SDK implementation
   s.swift_version = '5.0'
 
   s.dependency 'BluesnapSDK', '~> 1.3.7'
-  s.dependency 'BluesnapSDK/DataCollector', '~> 1.3.6'
+  s.dependency 'BluesnapSDK/DataCollector', '~> 1.3.7'
 end
