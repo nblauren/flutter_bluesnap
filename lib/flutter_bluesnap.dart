@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 
-String _currency;
+String? _currency;
 bool _enableGooglePay = false;
 bool _enablePaypal = false;
 bool _enableApplePay = false;
-String _applePayMerchantIdentifier;
+String? _applePayMerchantIdentifier;
 bool _enableProduction = false;
 bool _disable3DS = false;
 bool _hideStoreCardSwitch = false;
 
-Completer _setupRequest, _checkoutRequest;
+Completer? _setupRequest, _checkoutRequest;
 bool _initialized = false;
-Function _requestTokenHandler;
+Function? _requestTokenHandler;
 
 class FlutterBluesnapException implements Exception {
   final String type;
@@ -37,7 +37,7 @@ class FlutterBluesnap {
   static const String BS_PLAN = "recurring/plans";
   static const String BS_SUBSCRIPTION = "recurring/subscriptions";
 
-  static get tokenRequestHandler => _requestTokenHandler;
+  static Function get tokenRequestHandler => _requestTokenHandler ?? (() {});
   static set tokenRequestHandler(Function handler) {
     if (_requestTokenHandler == null) {
       _requestTokenHandler = handler;
@@ -56,7 +56,7 @@ class FlutterBluesnap {
           case 'getNewToken':
             print('Request new token');
             if (tokenRequestHandler != null) {
-              String token = await _requestTokenHandler(call.arguments);
+              String token = await _requestTokenHandler!(call.arguments);
               return token;
             }
             break;
@@ -64,7 +64,7 @@ class FlutterBluesnap {
             print('Setup completed succesfully: ${call.arguments}');
             if (_setupRequest != null) {
               print('resolve completer');
-              _setupRequest.complete(call.arguments);
+              _setupRequest!.complete(call.arguments);
               _setupRequest = null;
             } else {
               print('Setup request is null?!');
@@ -75,14 +75,14 @@ class FlutterBluesnap {
             if (_setupRequest != null) {
               Exception fail =
                   FlutterBluesnapException(call.arguments, call.method);
-              _setupRequest.completeError(fail);
+              _setupRequest!.completeError(fail);
               _setupRequest = null;
             }
             break;
           case 'checkoutResult':
             print('Checkout succesfully: ${call.arguments}');
             if (_checkoutRequest != null) {
-              _checkoutRequest.complete(call.arguments);
+              _checkoutRequest!.complete(call.arguments);
             }
             break;
           case 'requestFail':
@@ -92,7 +92,7 @@ class FlutterBluesnap {
               print("Sending fail to checkout request");
               Exception fail =
                   FlutterBluesnapException(call.arguments, call.method);
-              _checkoutRequest.completeError(fail);
+              _checkoutRequest!.completeError(fail);
               _checkoutRequest = null;
             } else {
               print('Checkout request is null?!');
@@ -108,15 +108,15 @@ class FlutterBluesnap {
   }
 
   static Future<dynamic> setup(
-      {String token,
-      String currency,
-      bool enableGooglePay,
-      bool enablePaypal,
-      bool enableApplePay,
-      bool enableProduction,
-      bool disable3DS,
-      bool hideStoreCardSwitch,
-      String applePayMerchantIdentifier}) async {
+      {String? token,
+      String? currency,
+      bool? enableGooglePay,
+      bool? enablePaypal,
+      bool? enableApplePay,
+      bool? enableProduction,
+      bool? disable3DS,
+      bool? hideStoreCardSwitch,
+      String? applePayMerchantIdentifier}) async {
     _listen();
 
     enableGooglePay = enableGooglePay ?? _enableGooglePay;
@@ -152,11 +152,11 @@ class FlutterBluesnap {
       "applePayMerchantIdentifier": applePayMerchantIdentifier
     });
 
-    return _setupRequest.future;
+    return _setupRequest!.future;
   }
 
   static Future<dynamic> checkout(
-      {double amount, String currency, String token}) async {
+      {double? amount, String? currency, String? token}) async {
     if (!_initialized) {
       throw StateError("Bluesnap not intialized, run setup first.");
     }
@@ -180,13 +180,13 @@ class FlutterBluesnap {
       "hideStoreCardSwitch": _hideStoreCardSwitch
     });
 
-    return _checkoutRequest.future;
+    return _checkoutRequest?.future;
   }
 
-  static Future<String> generateDummyToken(
+  static Future<String?> generateDummyToken(
       {bsSandboxUser,
       bsSandboxPw,
-      domain: 'https://sandbox.bluesnap.com/services/2/',
+      domain = 'https://sandbox.bluesnap.com/services/2/',
       shopperId}) async {
     Uri url;
 
@@ -201,7 +201,7 @@ class FlutterBluesnap {
     client.addCredentials(url, 'realm',
         new HttpClientBasicCredentials(bsSandboxUser, bsSandboxPw));
 
-    String token;
+    String? token;
 
     await client.postUrl(url).then((HttpClientRequest req) {
       req.headers
@@ -216,7 +216,7 @@ class FlutterBluesnap {
       int statusCode = res.statusCode;
       client.close();
 
-      String location = res.headers.value(HttpHeaders.locationHeader);
+      String? location = res.headers.value(HttpHeaders.locationHeader);
       print("\n\nResponse $res ${res.headers}");
       print("$statusCode - Location: $location");
       if (location != null) {

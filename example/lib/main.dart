@@ -29,8 +29,9 @@ class _MyAppState extends State<MyApp> {
     String dummyToken, statusMessage = 'processing...';
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      dummyToken = await FlutterBluesnap.generateDummyToken(
-          bsSandboxUser: '[SandboxUserName]', bsSandboxPw: '[SandboxPassword]');
+      dummyToken = (await FlutterBluesnap.generateDummyToken(
+          bsSandboxUser: '[SandboxUserName]',
+          bsSandboxPw: '[SandboxPassword]'))!;
 
       await FlutterBluesnap.setup(token: dummyToken, disable3DS: true);
       statusMessage = 'Setup complete.';
@@ -70,7 +71,7 @@ class _MyAppState extends State<MyApp> {
               Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 16.0, horizontal: 16.0),
-                  child: RaisedButton(
+                  child: ElevatedButton(
                       onPressed: _initialized
                           ? () async {
                               print('Checkout $amount');
