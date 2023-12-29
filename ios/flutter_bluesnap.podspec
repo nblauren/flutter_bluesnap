@@ -21,6 +21,6 @@ Flutter Bluesnap SDK implementation
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
   s.swift_version = '5.0'
 
-  s.dependency 'BluesnapSDK', '~> 2.0.1'
-  s.dependency 'BluesnapSDK/DataCollector', '~> 2.0.1'
+  s.dependency 'BluesnapSDK', '~> 2.0.2'
+  s.dependency 'BluesnapSDK/DataCollector', '~> 2.0.2'
 end
