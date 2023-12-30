@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Flutter Bluesnap SDK implementation
                        DESC
-  s.homepage         = 'https://github.com/BlidzCo/flutter_bluesnap'
+  s.homepage         = 'https://github.com/nblauren/flutter_bluesnap'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Markus Haverinen' => 'markus@blidz.com' }
   s.source           = { :path => '.' }
@@ -17,10 +17,9 @@ Flutter Bluesnap SDK implementation
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
 
+  s.dependency 'BluesnapSDK', '~> 2.0.0'
+
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
   s.swift_version = '5.0'
-
-  s.dependency 'BluesnapSDK', '~> 2.0.2'
-  s.dependency 'BluesnapSDK/DataCollector', '~> 2.0.2'
 end
